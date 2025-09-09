@@ -1,15 +1,15 @@
 package homework_1;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+
+import org.json.JSONObject;
+
+import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public class HttpClientImpl implements HttpClient {
     @Override
-    // TODO Реализовать применение параметра params
     public String get(String url, Map<String, String> headers, Map<String, String> params) {
         if (params != null) {
             StringBuilder urlWithParam = new StringBuilder(url + "?");
@@ -24,30 +24,36 @@ public class HttpClientImpl implements HttpClient {
         HttpURLConnection connection = getConnection(url, "GET");
         setHeaders(connection, headers);
         return readResponse(connection);
-
-
     }
 
     @Override
     public String post(String url, Map<String, String> headers, Map<String, String> data) {
-        return "";
+        HttpURLConnection connection = getConnection(url, "POST");
+        setHeaders(connection, headers);
+        setData(connection, data);
+        return readResponse(connection);
     }
 
     @Override
     public String put(String url, Map<String, String> headers, Map<String, String> data) {
-        return "";
+        HttpURLConnection connection = getConnection(url, "PUT");
+        setHeaders(connection, headers);
+        setData(connection, data);
+        return readResponse(connection);
     }
 
     @Override
     public String delete(String url, Map<String, String> headers, Map<String, String> data) {
-        return "";
+        HttpURLConnection connection = getConnection(url, "DELETE");
+        setHeaders(connection, headers);
+        setData(connection, data);
+        return readResponse(connection);
     }
 
-    private static String readResponse (HttpURLConnection connection) {
+    private static String readResponse(HttpURLConnection connection) {
         if (connection == null) {
-            return "Не удалось прочитать ответ";
+            return "Couldn't read the response";
         } else {
-
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
                 StringBuilder content = new StringBuilder();
                 String input;
@@ -56,12 +62,13 @@ public class HttpClientImpl implements HttpClient {
                 }
                 return content.toString();
             } catch (IOException e) {
+                System.out.println("Error with reading response");
                 throw new RuntimeException(e);
             }
         }
     }
 
-    private static HttpURLConnection getConnection (String url, String method) {
+    private static HttpURLConnection getConnection(String url, String method) {
         URL initUrl = null;
         try {
             initUrl = new URL(url);
@@ -82,16 +89,22 @@ public class HttpClientImpl implements HttpClient {
         return connection;
     }
 
-    private static void setHeaders (HttpURLConnection connection, Map<String, String> headers) {
+    private static void setHeaders(HttpURLConnection connection, Map<String, String> headers) {
         if (connection != null) {
             for (String key : headers.keySet()) {
                 connection.setRequestProperty(key, headers.get(key));
 
             }
-
-            connection.setConnectTimeout(5000);
-            connection.setReadTimeout(5000);
         }
+    }
 
+    private static void setData (HttpURLConnection connection, Map<String, String> data) {
+        JSONObject JSONData = new JSONObject(data);
+        connection.setDoOutput(true);
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()))) {
+            writer.write(JSONData.toString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
