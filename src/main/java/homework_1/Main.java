@@ -1,7 +1,15 @@
 package homework_1;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 public class Main {
     public static void main(String[] args) {
@@ -20,16 +28,9 @@ public class Main {
         data.put("text", "text");
         System.out.println(client.delete("https://webhook.site/9016bec8-0908-474f-95a4-3c0ef310c878", headers2, data));
 
-        Map<String, String> headers3 = new HashMap<>();
-        // TODO implement token substitution locally
-        System.out.println(System.getenv("OPEN_AI_TOKEN"));
-        headers3.put("Authorization", "Bearer ");
-        headers3.put("Content-Type", "application/json");
-        Map<String, String> data2 = new HashMap<>();
-        data2.put("model", "gpt-5-nano");
-        data2.put("input", "Let's tell me a story about unicorns");
-        System.out.println(client.post("https://api.openai.com/v1/responses", headers3, data2));
 
+        OpenAiClient openAiClient = new OpenAiClient();
+        System.out.println(openAiClient.getResponse("Hello, let's tell about programming"));
 
     }
 }
