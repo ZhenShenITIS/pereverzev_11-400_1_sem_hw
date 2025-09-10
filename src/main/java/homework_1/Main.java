@@ -1,15 +1,8 @@
 package homework_1;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
@@ -28,9 +21,18 @@ public class Main {
         data.put("text", "text");
         System.out.println(client.delete("https://webhook.site/9016bec8-0908-474f-95a4-3c0ef310c878", headers2, data));
 
-
+        Scanner sc = new Scanner(System.in);
         OpenAiClient openAiClient = new OpenAiClient();
-        System.out.println(openAiClient.getResponse("Hello, let's tell about programming"));
+        System.out.print("\n\nPlease enter your query: ");
+        if (sc.hasNextLine()) {
+            String line = sc.nextLine();
+            while (!line.trim().equals("/q")) {
+                System.out.println(openAiClient.getResponse(line));
+                System.out.print("\n\nPlease enter your another query (enter '/q' for exit): ");
+                line = sc.nextLine();
+            }
+        }
+
 
     }
 }

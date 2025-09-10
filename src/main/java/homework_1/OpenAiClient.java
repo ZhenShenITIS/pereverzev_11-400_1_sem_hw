@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Properties;
 
 public class OpenAiClient {
+
     public String getResponse (String prompt) {
         HttpClient client = new HttpClientImpl();
         Map<String, String> headers3 = new HashMap<>();
